@@ -7,10 +7,16 @@ const PostListItem = () => {
                 Hello world
             </span>
             <div className="d-flex justify-content-between aligh-item-center">
-                <button className="btn-star btn-sm">
+                <button
+                    type="submit"
+                    className="btn-star btn-sm"
+                >
                     <i className="fa fa-star"></i>
                 </button>
-                <button className="btn-trash btn-sm">
+                <button
+                    type="submit"
+                    className="btn-trash btn-sm"
+                >
                     <i className="fa fa-trash-o"></i>
                 </button>
                 <i className="fa fa-heart"></i>
