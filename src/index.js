@@ -1,14 +1,7 @@
-import React from 'react';
+import React, { Component } from 'react';
 import ReactDOM from 'react-dom';
-import './css/index.css';
-import './css/app.css';
-import './css/post-list.css';
-import './css/post-status-filter.css';
-import './css/search-panel.css';
-import './css/app-header.css';
-import './css/post-add-form.css';
-import './css/post-list-item.css';
-import App from './components/app/app';
+import './index.css';
+// import App from './components/app/app';
 import reportWebVitals from './reportWebVitals';
 
 
@@ -16,7 +9,8 @@ import reportWebVitals from './reportWebVitals';
 // они должны быть написаны с большой буквы
 
 // const Header = () => {
-//   // Защитаот вредоносных скриптов, реакт тупо записывает его сторокой =)
+//   // Защита от вредоносных скриптов, реакт тупо записывает его сторокой =)
+//  const src = <script>asdadssd</script>
 //   const scr = `Hello world!!`
 //   return <h2>{scr}</h2>
 // }
@@ -60,8 +54,83 @@ import reportWebVitals from './reportWebVitals';
 //   )
 // }
 
+// function WhoAmI({name,surname,link}) {
+// function WhoAmI(props) {
+//   return (
+//     // <React.Fragment>
+//     //   <h1>My name is , surname - </h1>
+//     //   <a href="">My profile</a>
+//     // </React.Fragment>
+
+//     // Новый синтаксис обретки без лишнего дива и реакт фрагмента
+//     <>
+//       <h1>My name is {props.name}, surname - {props.surname}</h1>
+//       <a href={props.link}>My profile</a>
+//     </>
+//   )
+// }
+
+// OOP style
+
+class WhoAmI extends Component {
+  constructor(props) {
+    super(props)
+    this.state = {
+      years: 26,
+      // nationality: 'uk'
+    }
+    // this.nextYear = this.nextYear.bind(this);
+    // this.nextYear = () => {
+    //   this.setState(state => ({
+    //     years: ++state.years
+    //   }))
+    // }
+  }
+
+  // Class fields позволяет записывать свойства и методы класса в не конструктора
+  // state = {
+  //   years: 26
+  // }
+
+  nextYear = () => {
+    this.setState(state => ({
+      years: ++state.years
+    }))
+  }
+
+  // nextYear() {
+  //   // Ошибка, мутировать нельзя
+  //   // this.state.years++
+  //   this.setState(state => ({
+  //     years: ++state.years
+  //   }))
+  // }
+
+  render() {
+    const { name, surname, link } = this.props;
+    const { years } = this.state;
+    return (
+      <>
+        <button onClick={this.nextYear}>++</button>
+        <h1>My name is {name}, surname - {surname}, years: {years}</h1>
+        <a href={link}>My profile</a>
+      </>
+    )
+  }
+}
+
+const All = () => {
+  return (
+    <>
+      <WhoAmI name="John" surname="Smith" link="facebook.com" />
+      <WhoAmI name="Ivan" surname="Shepard" link="facebook.com" />
+      <WhoAmI name="Vlad" surname="Smith" link="facebook.com" />
+    </>
+  )
+}
+
 ReactDOM.render(
-  <App />,
+  <All />,
   document.getElementById('root')
 );
 
