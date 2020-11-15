@@ -1,0 +1,11 @@
+.app-header {
+    align-items: center;
+    justify-content: center;
+    & h1 {
+        font-style: 26px;
+    }
+    & h2 {
+        font-size: 1.2rem;
+        color: grey;
+    }
+}
