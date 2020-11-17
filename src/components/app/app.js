@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { Component } from 'react';
 
 import AppHeader from '../app-header/app-header';
 import SearchPanel from '../search-panel/search-panel';
@@ -10,6 +10,7 @@ import './app.css'
 // Можно прописать стили прям внутри jsa
 import styled from 'styled-components';
 
+
 // Будет создан див и применены такие стили
 const AppBlock = styled.div`
     margin: 0 auto;
@@ -20,25 +21,185 @@ const StyledAppBlock = styled(AppBlock)`
     // background-color: grey;
 `;
 
-const App = () => {
 
-    const data = [
-        { label: "Going to learn React", important: true, id: 'qwqw' },
-        { label: "That is so good", important: false, id: 'weewe' },
-        { label: "I need a break...", important: false, id: 'fgg' }
-    ]
+export default class App extends Component {
+    constructor(props) {
+        super(props);
+        this.state = {
+            data: [
+                { label: "Going to learn React", important: true, like: false, id: 1 },
+                { label: "That is so good", important: false, like: false, id: 2 },
+                { label: "I need a break...", important: false, like: false, id: 3 }
+            ],
+            term: '',
+            filter: 'all'
+        }
+        this.deleteItem = this.deleteItem.bind(this);
+        this.addItem = this.addItem.bind(this);
+        this.onToggleImportant = this.onToggleImportant.bind(this);
+        this.onToggleLiked = this.onToggleLiked.bind(this);
+        this.onUpdateSearch = this.onUpdateSearch.bind(this);
+        this.onFilterSelect = this.onFilterSelect.bind(this);
 
-    return (
-        <StyledAppBlock>
-            <AppHeader />
-            <div className="search-panel d-flex">
-                <SearchPanel />
-                <PostStatusFilter />
-            </div>
-            <PostList posts={data} />
-            <PostAddForm />
-        </StyledAppBlock>
-    )
+        this.maxId = 4;
+
+    }
+
+    deleteItem(id) {
+        this.setState(({ data }) => {
+            const index = data.findIndex(elem => elem.id === id)
+            // Следуем принципу иммутабельности объекта создаем новый массив, а не меняем исходный
+            const before = data.slice(0, index);
+            const after = data.slice(index + 1);
+
+            const newArr = [...before, ...after];
+            return {
+                data: newArr
+            }
+
+        })
+    }
+
+    addItem(body) {
+        const newItem = {
+            label: body,
+            important: false,
+            id: this.maxId++,
+        }
+
+        this.setState(({ data }) => {
+            const newArr = [...data, newItem];
+
+            return {
+                data: newArr
+            }
+
+        })
+    }
+
+    onToggleImportant(id) {
+        this.setState(({ data }) => {
+            const index = data.findIndex(elem => elem.id === id);
+
+            const old = data[index];
+            const newItem = { ...old, important: !old.important };
+
+            const before = data.slice(0, index);
+            const after = data.slice(index + 1);
+
+            const newArr = [...before, newItem, ...after];
+
+            return {
+                data: newArr
+            }
+        })
+    }
+
+    onToggleLiked(id) {
+        this.setState(({ data }) => {
+            const index = data.findIndex(elem => elem.id === id);
+
+            const old = data[index];
+            const newItem = { ...old, like: !old.like };
+
+            const before = data.slice(0, index);
+            const after = data.slice(index + 1);
+
+            const newArr = [...before, newItem, ...after];
+
+            return {
+                data: newArr
+            }
+        })
+    }
+
+    searchPosts(items, term) {
+        if (term.length === 0) {
+            return items
+        }
+
+        return items.filter((item) => {
+            return item.label.indexOf(term) > -1;
+        });
+    }
+
+    onUpdateSearch(term) {
+        this.setState({ term });
+    }
+
+    filterPosts(items, filter) {
+        if (filter === 'like') {
+            return items.filter(item => item.like);
+        } else {
+            return items
+        }
+    }
+
+    onFilterSelect(filter) {
+        this.setState({ filter });
+    }
+
+    render() {
+        const { data, term, filter } = this.state;
+
+        const liked = data.filter(item => item.like).length;
+        const allPosts = data.length;
+
+        const visiblePosts = this.filterPosts(this.searchPosts(data, term), filter);
+
+        return (
+            <StyledAppBlock>
+                <AppHeader
+                    liked={liked}
+                    allPosts={allPosts}
+                />
+                <div className="search-panel d-flex">
+                    <SearchPanel
+                        onUpdateSearch={this.onUpdateSearch}
+                    />
+                    <PostStatusFilter
+                        filter={filter}
+                        onFilterSelect={this.onFilterSelect}
+                    />
+                </div>
+                <PostList
+                    posts={visiblePosts}
+                    // Пробрасываем пропс
+                    onDelete={this.deleteItem}
+                    onToggleImportant={this.onToggleImportant}
+                    onToggleLiked={this.onToggleLiked}
+                />
+                <PostAddForm
+                    onAdd={this.addItem}
+                />
+            </StyledAppBlock>
+        )
+    }
 }
 
-export default App;
+// const App = () => {
+
+//     const data = [
+//         { label: "Going to learn React", important: true, id: 'qwqw' },
+//         { label: "That is so good", important: false, id: 'weewe' },
+//         { label: "I need a break...", important: false, id: 'fgg' }
+//     ]
+
+//     return (
+//         <StyledAppBlock>
+//             <AppHeader />
+//             <div className="search-panel d-flex">
+//                 <SearchPanel />
+//                 <PostStatusFilter />
+//             </div>
+//             <PostList
+//                 posts={data}
+//                 // Пробрасываем пропс
+//                 onDelete={id => console.log(id)}
+//             />
+//             <PostAddForm />
+//         </StyledAppBlock>
+//     )
+// }
+
+// export default App;
